@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<h2>Azure &quot;EasyAuth&quot; Sample with Multiple Login Providers</h2>
+<a href="https://www.benday.com">by Benjamin Day</a>
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        If you use Azure Web Apps, you get access to their authentication framework.  It's commonly refered to as Azure Easy Auth.
+        <p>
+            Easy Auth makes it very simple to allow your users to authenticate using Azure Active Directory (AAD), Microsoft Accounts (MSA),
+            Facebook, or Google user accounts.  What makes it even better is that the logic for working with these providers exists as
+            configuration data in your Azure App Service and it doesn't require you to write any code in your applications...
+        </p>
+        <p>...well, at least as long as you're using Easy Auth for simple scenarios.</p>
+        <p>
+            There are two scenarios where it's really easy to use:
+            <ol>
+                <li>you use ONLY one of the authentication providers and</li>
+                <li>your users can either access the whole application or they can't</li>
+            </ol>
+        </p>
+        <p>
+            EasyAuth gets a little harder when you...
+            <ol>
+                <li>want to use more than one authentication provider (for example: AAD + MSA + Google)</li>
+                <li>need to be a little more nuanced about who is in or out of your application</li>
+                <li>need to combine EasyAuth's authentication with more complex authentication requirements</li>
+            </ol>
+        </p>
+
+        <h3>
+            This sample app shows you how to do go beyond the easy stuff.
+        </h3>
+        <h4>
+            Things you'll care about:            
+        </h4>
+        <ol>
+            <li>
+                <u>Development Mode in appsettings.json.</u>  You'll want development mode is set to true when you're running
+                the app on your local machine without any Azure stuff.
+                <img src="~/images/appsettings-json.jpg" width="600" />
+            </li>
+            <li>
+                <u>View Claims / Cookies / Headers Page</u>  This page shows you what your security claims look like plus info about cookies and the HTTP headers.  If you're logged in, this page will show you a lot.  If you're not logged in, it'll be a little sparse.
+            </li>
+            <li>
+                <u>Page The Requires Login</u>  This page is mostly here to show you that part of the application requires you to be logged in.  This page also lets you view the raw JSON of the /.auth/me response.
+            </li>
+            <li>
+                <u>PopulateClaimsMiddleware.cs</u>  This class turns what Easy Auth knows about you into ASP.NET claims that you can use.
+            </li>
+            <li>
+                <u>AzureEasyAuthClient.cs</u>  This class knows how to take your auth cookie and make authenticated calls to the /.auth/me service.  
+            </li>
+            <li>
+                <u>LoggedInUsingEasyAuthRequirement.cs / LoggedInUsingEasyAuthHandler.cs</u>  These classes work together and they represent the security policies that are defined for the app.  Put another way, 
+                this is where all the security logic goes for making sure that you're actually authorized to access the app.  It does all this by looking at the user's claims. 
+            </li>
+        </ol>
+    </div>
+</div>
