@@ -2,7 +2,7 @@ name: build-deploy-dotnet5
 
 defaults:
   run:
-    working-directory: 'dotnet5.0'
+    working-directory: 'dotnet5.0/Benday.EasyAuthDemo'
 
 on:
   workflow_dispatch:
@@ -31,7 +31,7 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
     - name: Publish
       run: dotnet publish --configuration Release -o '${{ github.workspace }}/published'
-      working-directory: 'dotnet5.0/src/Benday.EasyAuthDemo.WebUi'
+      working-directory: 'dotnet5.0/Benday.EasyAuthDemo/src/Benday.EasyAuthDemo.WebUi'
     - name: Get current date
       run: echo "RUN_DATE=$(date -u)" >> $GITHUB_ENV
     - name: Set version message in appsettings.json
