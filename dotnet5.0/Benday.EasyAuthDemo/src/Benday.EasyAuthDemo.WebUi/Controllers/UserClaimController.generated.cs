@@ -122,6 +122,8 @@ namespace Benday.EasyAuthDemo.WebUi.Controllers
         
         private void PopulateLookups(UserClaimEditorViewModel viewModel)
         {
+            viewModel.ClaimNames = WebUiUtilities.ToSelectListItems(
+            _LookupService.GetAllByType("System.UserClaim.PermissionTypes"));
             viewModel.ClaimLogicTypes = WebUiUtilities.ToSelectListItems(
             _LookupService.GetAllByType("System.UserClaim.ClaimLogicTypes"));
             viewModel.Statuses = WebUiUtilities.ToSelectListItems(

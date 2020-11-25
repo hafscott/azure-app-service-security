@@ -131,6 +131,28 @@ USING (
 	),
 
 (
+		1000, 
+		'System.Lookup.Types', 
+		'System.UserClaim.ClaimLogicTypes',
+		'Claim Logic Type',
+		50, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		1010, 
+		'System.Lookup.Types', 
+		'System.UserClaim.PermissionTypes',
+		'Permission Types',
+		50, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
 		12, 
 		'System.Lookup.StatusValues', 
 		'Active',
@@ -852,6 +874,39 @@ USING (
 		'ToTypescriptFileFormat',
 		0, 
 		'Active', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		600, 
+		'System.UserClaim.ClaimLogicTypes', 
+		'DEFAULT',
+		'Default',
+		0, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		601, 
+		'System.UserClaim.ClaimLogicTypes', 
+		'TIME-BASED',
+		'Date/Time Based',
+		10, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		10000, 
+		'System.UserClaim.PermissionTypes', 
+		'role',
+		'Role',
+		0, 
+		'ACTIVE', 
 		@me, @now, 
 		@me, @now	
 	))

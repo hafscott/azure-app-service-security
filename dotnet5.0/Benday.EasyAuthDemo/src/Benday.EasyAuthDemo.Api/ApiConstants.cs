@@ -11,8 +11,8 @@ namespace Benday.EasyAuthDemo.Api
         public const int UnsavedId = 0;
         public const string ClaimName_UserId = "Local.UserId";
         public const string Username_GlobalUser = "GLOBAL_USER";
-
         public const string ClaimLogicType_DateTimeBased = "TIME-BASED";
         public const string ClaimLogicType_Default = "DEFAULT";
+
     }
 }

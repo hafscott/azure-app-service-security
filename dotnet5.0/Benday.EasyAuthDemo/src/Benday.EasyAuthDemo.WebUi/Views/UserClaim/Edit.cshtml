@@ -30,12 +30,13 @@ ViewBag.Title = "Edit User claim";
         </div>
     
         <div class="form-group">
-        @Html.LabelFor(model => model.ClaimName, htmlAttributes: new { @class = "control-label" })
-            <input asp-for="@Model.ClaimName" class="form-control" />
-            <span asp-validation-for="@Model.ClaimName" class="text-danger">
+            <label asp-for="ClaimName" class="control-label">
+            </label>
+            <select asp-for="ClaimName" asp-items="Model.ClaimNames" class="form-control">
+            </select>
+            <span asp-validation-for="ClaimName" class="text-danger">
             </span>
         </div>
-    
         <div class="form-group">
         @Html.LabelFor(model => model.ClaimValue, htmlAttributes: new { @class = "control-label" })
             <input asp-for="@Model.ClaimValue" class="form-control" />

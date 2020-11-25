@@ -11,11 +11,13 @@
         </td>
     
         <td>
-            <input asp-for="@Model.ClaimName" class="form-control" />
-            <span asp-validation-for="@Model.ClaimName" class="text-danger">
+            <select asp-for="ClaimName" asp-items="Model.ClaimNames" class="form-control">
+            </select>
+            <span asp-validation-for="ClaimName" class="text-danger">
+            </span>
+            <span asp-validation-for="@Model.ClaimName">
             </span>
         </td>
-    
         <td>
             <input asp-for="@Model.ClaimValue" class="form-control" />
             <span asp-validation-for="@Model.ClaimValue" class="text-danger">

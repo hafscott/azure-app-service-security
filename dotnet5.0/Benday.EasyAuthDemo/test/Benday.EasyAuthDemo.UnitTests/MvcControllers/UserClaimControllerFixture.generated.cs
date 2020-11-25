@@ -179,6 +179,9 @@ namespace Benday.EasyAuthDemo.UnitTests.MvcControllers
         
         private void AssertLookupValueListsArePopulated(UserClaimEditorViewModel actual)
         {
+            Assert.IsNotNull(actual.ClaimNames, "ClaimNames");
+            Assert.AreNotEqual<int>(0, actual.ClaimNames.Count,
+            "actual.ClaimNames should have items");
             Assert.IsNotNull(actual.ClaimLogicTypes, "ClaimLogicTypes");
             Assert.AreNotEqual<int>(0, actual.ClaimLogicTypes.Count,
             "actual.ClaimLogicTypes should have items");

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Benday.EasyAuthDemo.Api.Migrations
 {
     [DbContext(typeof(EasyAuthDemoDbContext))]
-    [Migration("20201124183308_InitialSetup")]
+    [Migration("20201125140459_InitialSetup")]
     partial class InitialSetup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
