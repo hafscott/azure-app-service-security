@@ -4,6 +4,7 @@
         <td>
         @Html.CheckBoxFor(model => model.IsSelected)
         </td>
+    @Html.HiddenFor(model => model.Id)
         <td>
             <input asp-for="@Model.DisplayOrder" class="form-control" />
             <span asp-validation-for="@Model.DisplayOrder" class="text-danger">
@@ -30,6 +31,12 @@
             </span>
         </td>
     
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreatedBy)
+    @Html.HiddenFor(model => model.CreatedDate)
+    @Html.HiddenFor(model => model.LastModifiedBy)
+    @Html.HiddenFor(model => model.LastModifiedDate)
+    @Html.HiddenFor(model => model.Timestamp)
         <td>
             <button
             type="button"
