@@ -16,6 +16,15 @@ jobs:
 
     runs-on: ubuntu-latest
     # runs-on: self-hosted
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Pa$$word
+          MSSQL_PID: Standard
+        ports:
+        - 1433:1433        
 
     steps:
     - uses: actions/checkout@v2
