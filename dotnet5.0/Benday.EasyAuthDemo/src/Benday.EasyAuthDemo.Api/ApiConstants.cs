@@ -2,8 +2,9 @@ using System;
 
 namespace Benday.EasyAuthDemo.Api
 {
-    public static class ApiConstants
+    public static partial class ApiConstants
     {
-        public static readonly int UnsavedId = 0;
+        public const string ClaimLogicType_DateTimeBased = "TIME-BASED";
+        public const string ClaimLogicType_Default = "DEFAULT";
     }
 }

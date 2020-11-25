@@ -1,27 +1,36 @@
 @model Benday.EasyAuthDemo.WebUi.Models.PersonEditorViewModel
-<tr>
-@Html.HiddenFor(model => model.Id)
-<td>
-    @Html.EditorFor(model => model.FirstName)
-</td>
-<td>
-    @Html.EditorFor(model => model.LastName)
-</td>
-<td>
-    @Html.EditorFor(model => model.PhoneNumber)
-</td>
-<td>
-    @Html.EditorFor(model => model.EmailAddress)
-</td>
-@Html.HiddenFor(model => model.Status)
-@Html.HiddenFor(model => model.CreatedBy)
-@Html.HiddenFor(model => model.CreatedDate)
-@Html.HiddenFor(model => model.LastModifiedBy)
-@Html.HiddenFor(model => model.LastModifiedDate)
-@Html.HiddenFor(model => model.Timestamp)
-<td>
-            @Html.ActionLink("Edit", "Edit", "Person", new { id=Model.Id }) |
-            @Html.ActionLink("Details", "Details", "Person", new { id=Model.Id }) |
-            @Html.ActionLink("Delete", "Delete", "Person", new { id=Model.Id })
+    <tr id="@Html.Id("row")">
+    @Html.HiddenFor(model => model.IsMarkedForDelete)
+        <td>
+        @Html.CheckBoxFor(model => model.IsSelected)
         </td>
-</tr>
+    @Html.HiddenFor(model => model.Id)
+        <td>
+            <input asp-for="@Model.FirstName" class="form-control" />
+            <span asp-validation-for="@Model.FirstName" class="text-danger">
+            </span>
+        </td>
+    
+        <td>
+            <input asp-for="@Model.LastName" class="form-control" />
+            <span asp-validation-for="@Model.LastName" class="text-danger">
+            </span>
+        </td>
+    
+    @Html.HiddenFor(model => model.PhoneNumber)
+    @Html.HiddenFor(model => model.EmailAddress)
+    @Html.HiddenFor(model => model.Status)
+    @Html.HiddenFor(model => model.CreatedBy)
+    @Html.HiddenFor(model => model.CreatedDate)
+    @Html.HiddenFor(model => model.LastModifiedBy)
+    @Html.HiddenFor(model => model.LastModifiedDate)
+    @Html.HiddenFor(model => model.Timestamp)
+        <td>
+            <button
+            type="button"
+            class="btn-danger"
+            onclick="markForDeleteOrUndelete('@Html.Id("deleteUndeleteButton")', '@Html.Id("row")', '@Html.IdFor(model => model.IsMarkedForDelete)')"
+            id="@Html.Id("deleteUndeleteButton")">delete</button>
+            </td>
+        </tr>
+    

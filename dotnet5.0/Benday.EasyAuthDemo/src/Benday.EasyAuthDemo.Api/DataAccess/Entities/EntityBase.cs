@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Benday.EfCore.SqlServer;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using Benday.Common;
 
 namespace Benday.EasyAuthDemo.Api.DataAccess.Entities
@@ -12,13 +14,13 @@ namespace Benday.EasyAuthDemo.Api.DataAccess.Entities
     {
         [Column(Order = 0)]
         public int Id { get; set; }
-
+        
         [NotMapped]
         public bool IsMarkedForDelete
         {
             get; set;
         }
-
+        
         public virtual IList<IDependentEntityCollection> GetDependentEntities()
         {
             return null;

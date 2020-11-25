@@ -14,7 +14,7 @@ namespace Benday.EasyAuthDemo.UnitTests.DataAccess.Entities
         {
             _SystemUnderTest = null;
         }
-
+        
         private LookupEntity _SystemUnderTest;
         public LookupEntity SystemUnderTest
         {
@@ -24,11 +24,11 @@ namespace Benday.EasyAuthDemo.UnitTests.DataAccess.Entities
                 {
                     _SystemUnderTest = new LookupEntity();
                 }
-
+                
                 return _SystemUnderTest;
             }
         }
-
+        
         
     }
 }

@@ -34,11 +34,24 @@ jobs:
         dotnet-version: 5.0.x
     - name: Install dependencies
       run: dotnet restore
+
+    - name: dotnet tool restore
+      run: dotnet tool restore
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
     - name: deploy database migrations
       run: dotnet ef database update
+      working-directory: 'dotnet5.0/Benday.EasyAuthDemo/src/Benday.EasyAuthDemo.Api'
+
+    - name: update lookup values in database
+      run: ./update-lookup-values.sh
+      working-directory: 'dotnet5.0/Benday.EasyAuthDemo'
+
+    - name: create permissions in test database
+      run: ./populate-sql-server-permissions.sh
+      working-directory: 'dotnet5.0/Benday.EasyAuthDemo/misc/database'
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal

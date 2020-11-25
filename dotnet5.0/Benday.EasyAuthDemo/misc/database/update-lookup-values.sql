@@ -1,6 +1,3 @@
-USE [easyauthdemo]
-GO
-
 SET IDENTITY_INSERT [Lookup] ON
 GO
 
@@ -129,6 +126,28 @@ USING (
 		'Config Value Function',
 		110, 
 		'Active', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		1000, 
+		'System.Lookup.Types', 
+		'System.UserClaim.ClaimLogicTypes',
+		'Claim Logic Type',
+		50, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		1010, 
+		'System.Lookup.Types', 
+		'System.UserClaim.PermissionTypes',
+		'Permission Types',
+		50, 
+		'ACTIVE', 
 		@me, @now, 
 		@me, @now	
 	),
@@ -857,6 +876,39 @@ USING (
 		'Active', 
 		@me, @now, 
 		@me, @now	
+	),
+
+(
+		600, 
+		'System.UserClaim.ClaimLogicTypes', 
+		'DEFAULT',
+		'Default',
+		0, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		601, 
+		'System.UserClaim.ClaimLogicTypes', 
+		'TIME-BASED',
+		'Date/Time Based',
+		10, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
+	),
+
+(
+		10000, 
+		'System.UserClaim.PermissionTypes', 
+		'role',
+		'Role',
+		0, 
+		'ACTIVE', 
+		@me, @now, 
+		@me, @now	
 	))
 
 AS Source (Id, LookupType, LookupKey, LookupValue, DisplayOrder, Status, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate)
@@ -874,5 +926,6 @@ WHEN MATCHED THEN UPDATE SET
 WHEN NOT MATCHED BY TARGET THEN
 	INSERT (Id, LookupType, LookupKey, LookupValue, DisplayOrder, Status, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate)
 	VALUES (Id, LookupType, LookupKey, LookupValue, DisplayOrder, Status, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate)
-;
+WHEN NOT MATCHED BY SOURCE THEN 
+	DELETE;
 GO

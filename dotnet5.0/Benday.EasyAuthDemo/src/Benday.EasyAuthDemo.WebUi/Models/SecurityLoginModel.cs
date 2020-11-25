@@ -1,17 +1,14 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Benday.EasyAuthDemo.WebUi.Models
 {
-    public class SecurityLoginModel
+    public partial class SecurityLoginModel
     {
         public SecurityLoginModel()
         {
-            LoginTypes = new List<KeyValuePair<string, string>>();
+            LoginTypes = new List<SecurityLoginOption>();
         }
-
-        public List<KeyValuePair<string, string>> LoginTypes { get; set; }
+        
+        public List<SecurityLoginOption> LoginTypes { get; set; }
     }
 }
