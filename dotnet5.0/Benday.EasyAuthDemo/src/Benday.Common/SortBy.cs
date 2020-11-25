@@ -1,4 +1,4 @@
-﻿namespace Benday.Common
+namespace Benday.Common
 {
     public class SortBy
     {

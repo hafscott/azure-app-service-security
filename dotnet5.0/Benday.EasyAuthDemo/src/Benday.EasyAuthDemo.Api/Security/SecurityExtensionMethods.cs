@@ -9,16 +9,12 @@ namespace Benday.EasyAuthDemo.Api.Security
 {
     public static class SecurityExtensionMethods
     {
-        
-
-        
-
         public static IApplicationBuilder UsePopulateClaimsMiddleware(
             this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<PopulateClaimsMiddleware>();
         }
-
+        
         public static Claim GetClaim(
             this IEnumerable<Claim> claims, string claimName)
         {
@@ -29,18 +25,18 @@ namespace Benday.EasyAuthDemo.Api.Security
             else
             {
                 var match = (from temp in claims
-                             where temp.Type == claimName
-                             select temp).FirstOrDefault();
-
+                where temp.Type == claimName
+                select temp).FirstOrDefault();
+                
                 return match;
             }
         }
-
+        
         public static string GetClaimValue(
             this IEnumerable<Claim> claims, string claimName)
         {
             var match = claims.GetClaim(claimName);
-
+            
             if (match == null)
             {
                 return null;
@@ -50,12 +46,12 @@ namespace Benday.EasyAuthDemo.Api.Security
                 return match.Value;
             }
         }
-
+        
         public static bool ContainsClaim(
             this IEnumerable<Claim> claims, string claimName)
         {
             var match = claims.GetClaim(claimName);
-
+            
             if (match == null)
             {
                 return false;
@@ -65,7 +61,23 @@ namespace Benday.EasyAuthDemo.Api.Security
                 return true;
             }
         }
-
+        
+        public static bool ContainsRoleClaim(
+            this IEnumerable<Claim> claims, string roleName)
+        {
+            var match = claims.Where(
+            x => x.Type == ClaimTypes.Role && x.Value == roleName).FirstOrDefault();
+            
+            if (match == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        
         public static KeyValuePair<string, StringValues> GetHeader(
             this IHeaderDictionary headers, string name)
         {
@@ -75,15 +87,15 @@ namespace Benday.EasyAuthDemo.Api.Security
             }
             else
             {
-                var match = 
-                    (from temp in headers
-                    where temp.Key == name
-                    select temp).FirstOrDefault();
-
+                var match =
+                (from temp in headers
+                where temp.Key == name
+                select temp).FirstOrDefault();
+                
                 return match;
             }
         }
-
+        
         public static string GetHeaderValue(
             this IHeaderDictionary headers, string name)
         {

@@ -1,4 +1,6 @@
 using Benday.EasyAuthDemo.Api.DataAccess;
+using Benday.EasyAuthDemo.Api.DomainModels;
+using Benday.EasyAuthDemo.Api.ServiceLayers;
 using Benday.JsonUtilities;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
@@ -15,30 +17,30 @@ namespace Benday.EasyAuthDemo.Api.Security
     public class PopulateClaimsMiddleware : IMiddleware
     {
         private ISecurityConfiguration _Configuration;
-        private IEasyAuthDemoDbContext _DbContext;
-
+        private IUserService _UserService;
+        
         public PopulateClaimsMiddleware(ISecurityConfiguration configuration,
-            IEasyAuthDemoDbContext context)
+            IUserService userService)
         {
             if (configuration == null)
             {
                 throw new ArgumentNullException(nameof(configuration), $"{nameof(configuration)} is null.");
             }
-
+            
             _Configuration = configuration;
-            _DbContext = context ?? throw new ArgumentNullException(nameof(context));
+            _UserService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
-
+        
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             List<Claim> claims = new List<Claim>();
-
+            
             if (_Configuration.DevelopmentMode == true &&
-                context.User != null &&
-                context.User.Claims != null &&
-                context.User.Claims.GetClaimValue(
-                    SecurityConstants.Claim_X_MsClientPrincipalIdp) ==
-                    SecurityConstants.Idp_DevelopmentMode)
+            context.User != null &&
+            context.User.Claims != null &&
+            context.User.Claims.GetClaimValue(
+            SecurityConstants.Claim_X_MsClientPrincipalIdp) ==
+            SecurityConstants.Idp_DevelopmentMode)
             {
                 ProcessDevelopmentModeClaims(context, claims);
             }
@@ -46,62 +48,82 @@ namespace Benday.EasyAuthDemo.Api.Security
             {
                 ProcessNonDevelopmentModeClaims(context, claims);
             }
-
+            
             await next(context);
         }
-
+        
         private void ProcessNonDevelopmentModeClaims(
             HttpContext context, List<Claim> claims)
         {
             AddClaimsFromHeader(context, claims);
             AddClaimsFromAuthMeService(context, claims);
-            AddClaimsFromDatabase(context, claims);
-
+            AddClaimsFromDatabaseAndCreateUserIfNotPresent(context, claims);
+            
             var identity = new ClaimsIdentity(claims);
-
+            
             context.User = new System.Security.Claims.ClaimsPrincipal(identity);
         }
-
+        
         private void ProcessDevelopmentModeClaims(
             HttpContext context, List<Claim> claims)
         {
             if (context.User != null &&
-                    context.User.Identity != null &&
-                    context.User.Identity.IsAuthenticated == true)
+            context.User.Identity != null &&
+            context.User.Identity.IsAuthenticated == true)
             {
                 // copy the existing claims
                 claims.AddRange(context.User.Claims);
-
-                AddClaim(claims, ClaimTypes.GivenName, "Testy");
-                AddClaim(claims, ClaimTypes.Surname, "McTestface");
-                AddClaim(claims, ClaimTypes.Email, "testy@testface.org");
-                AddClaim(claims, 
-                    SecurityConstants.Claim_X_MsClientPrincipalName, 
-                    "testy@testface.org");
-
+                
+                var info = new UserInformation(
+                new SimpleClaimsAccessor(claims));
+                
+                var username = info.Username;
+                
+                username = username.Replace(".com", String.Empty)
+                .Replace(".org", String.Empty);
+                
+                var tokens = username.Split("@");
+                
+                AddClaim(claims, ClaimTypes.GivenName, tokens.FirstOrDefault());
+                AddClaim(claims, ClaimTypes.Surname, tokens.LastOrDefault());
+                AddClaim(claims, ClaimTypes.Email, info.Username);
+                //AddClaim(claims,
+                //    SecurityConstants.Claim_X_MsClientPrincipalName,
+                //    info.EmailAddress);
+                
+                AddClaimsFromDatabaseAndCreateUserIfNotPresent(info, claims);
+                
                 var identity = new ClaimsIdentity(claims);
-
+                
                 context.User = new System.Security.Claims.ClaimsPrincipal(identity);
             }
         }
-
+        
+        private void AddClaimsFromDatabaseAndCreateUserIfNotPresent(
+            UserInformation info, List<Claim> claims)
+        {
+            AddClaimsFromDatabaseAndCreateUserIfNotPresent(
+            claims,
+            info.Username);
+        }
+        
         private void AddClaimsFromAuthMeService(
             HttpContext context, List<Claim> claims)
         {
             if (context.Request.Cookies.ContainsKey(SecurityConstants.Cookie_AppServiceAuthSession) == true)
             {
                 var authMeJson = GetAuthMeInfo(context.Request);
-
+                
                 var jsonArray = JArray.Parse(authMeJson);
-
+                
                 var editor = new JsonEditor(jsonArray[0].ToString(), true);
-
+                
                 AddClaimIfExists(claims, editor, ClaimTypes.GivenName);
                 AddClaimIfExists(claims, editor, ClaimTypes.Surname);
                 if (AddClaimIfExists(claims, editor, ClaimTypes.Email) == false)
                 {
                     var temp = editor.GetValue("user_id");
-
+                    
                     if (temp.IsNullOrWhitespace() == false)
                     {
                         claims.Add(new Claim(ClaimTypes.Email, temp));
@@ -109,15 +131,15 @@ namespace Benday.EasyAuthDemo.Api.Security
                 }
             }
         }
-
+        
         private bool AddClaimIfExists(List<Claim> claims, JsonEditor editor, string claimTypeName)
         {
             var temp = GetClaimValue(editor, claimTypeName);
-
+            
             if (temp.IsNullOrWhitespace() == false)
             {
                 AddClaim(claims, claimTypeName, temp);
-
+                
                 return true;
             }
             else
@@ -125,31 +147,31 @@ namespace Benday.EasyAuthDemo.Api.Security
                 return false;
             }
         }
-
+        
         private static void AddClaim(List<Claim> claims, string claimTypeName, string value)
         {
             claims.Add(new Claim(claimTypeName, value));
         }
-
+        
         private string GetClaimValue(JsonEditor editor, string claimName)
         {
             var args = new SiblingValueArguments();
-
+            
             args.SiblingSearchKey = "typ";
             args.SiblingSearchValue = claimName;
-
+            
             args.DesiredNodeKey = "val";
             args.PathArguments = new[] { "user_claims" };
-
+            
             var temp = editor.GetSiblingValue(args);
-
+            
             return temp;
         }
-
+        
         private string GetAuthMeInfo(HttpRequest request)
         {
             var client = new AzureEasyAuthClient(request);
-
+            
             if (client.IsReadyForAuthenticatedCall == false)
             {
                 return null;
@@ -157,84 +179,118 @@ namespace Benday.EasyAuthDemo.Api.Security
             else
             {
                 var resultAsString = client.GetUserInformationJson();
-
+                
                 return resultAsString;
             }
         }
-
-
-        private void AddClaimsFromDatabase(HttpContext context, List<Claim> claims)
+        
+        
+        private void AddClaimsFromDatabaseAndCreateUserIfNotPresent(
+            HttpContext context, List<Claim> claims)
         {
             var identityProviderHeader =
-                            GetHeaderValue(context, SecurityConstants.Claim_X_MsClientPrincipalIdp);
-
-            var nameHeader =
-                GetHeaderValue(
-                    context,
-                    SecurityConstants.Claim_X_MsClientPrincipalName);
-
-            if (identityProviderHeader != null && 
-                nameHeader != null)
+            GetHeaderValue(context, SecurityConstants.Claim_X_MsClientPrincipalIdp);
+            
+            var username =
+            GetHeaderValue(
+            context,
+            SecurityConstants.Claim_X_MsClientPrincipalName);
+            
+            if (identityProviderHeader != null &&
+            username != null)
             {
-                var values = _DbContext.UserClaimEntities.Where(
-                    x => x.Username == nameHeader).ToList();
-
-                foreach (var item in values)
+                AddClaimsFromDatabaseAndCreateUserIfNotPresent(claims, username);
+            }
+        }
+        
+        private void AddClaimsFromDatabaseAndCreateUserIfNotPresent(List<Claim> claims, string username)
+        {
+            var user = _UserService.GetByUsername(username);
+            
+            if (user == null)
+            {
+                user = CreateNewUser(claims);
+            }
+            
+            if (user == null || user.Claims == null)
+            {
+                throw new InvalidOperationException("User or user claims collection was null.");
+            }
+            
+            var values = user.Claims.ToList();
+            
+            foreach (var item in values)
+            {
+                if (item.ClaimName == "role")
                 {
-                    if (item.ClaimName == "role")
-                    {
-                        AddClaim(claims,
-                            ClaimTypes.Role, item.ClaimValue);
-                    }
-                    else
-                    {
-                        AddClaim(claims,
-                            item.ClaimName, item.ClaimValue);
-                    }                    
+                    AddClaim(claims,
+                    ClaimTypes.Role, item.ClaimValue);
+                }
+                else
+                {
+                    AddClaim(claims,
+                    item.ClaimName, item.ClaimValue);
                 }
             }
         }
-
+        
+        private User CreateNewUser(List<Claim> claims)
+        {
+            var info = new UserInformation(new SimpleClaimsAccessor(claims));
+            
+            var user = new User();
+            
+            user.EmailAddress = info.EmailAddress;
+            user.FirstName = info.FirstName;
+            user.Username = info.Username;
+            user.LastName = info.LastName;
+            user.PhoneNumber = String.Empty;
+            user.Status = ApiConstants.StatusActive;
+            user.Source = info.Source;
+            
+            _UserService.Save(user);
+            
+            return user;
+        }
+        
         private void AddClaimsFromHeader(HttpContext context, List<Claim> claims)
         {
             var identityProviderHeader =
-                            GetHeaderValue(context, SecurityConstants.Claim_X_MsClientPrincipalIdp);
-
+            GetHeaderValue(context, SecurityConstants.Claim_X_MsClientPrincipalIdp);
+            
             if (identityProviderHeader != null)
             {
                 var identityHeader =
-                    GetHeaderValue(
-                        context,
-                        SecurityConstants.Claim_X_MsClientPrincipalId);
-
+                GetHeaderValue(
+                context,
+                SecurityConstants.Claim_X_MsClientPrincipalId);
+                
                 var nameHeader =
-                    GetHeaderValue(
-                        context,
-                        SecurityConstants.Claim_X_MsClientPrincipalName);
-
+                GetHeaderValue(
+                context,
+                SecurityConstants.Claim_X_MsClientPrincipalName);
+                
                 claims.Add(new Claim(
-                    SecurityConstants.Claim_X_MsClientPrincipalIdp,
-                    identityProviderHeader));
-
+                SecurityConstants.Claim_X_MsClientPrincipalIdp,
+                identityProviderHeader));
+                
                 claims.Add(new Claim(
-                    SecurityConstants.Claim_X_MsClientPrincipalId,
-                    identityHeader));
-
+                SecurityConstants.Claim_X_MsClientPrincipalId,
+                identityHeader));
+                
                 claims.Add(new Claim(
-                    SecurityConstants.Claim_X_MsClientPrincipalName,
-                    nameHeader));
+                SecurityConstants.Claim_X_MsClientPrincipalName,
+                nameHeader));
             }
         }
-
+        
         private string GetHeaderValue(HttpContext context, string headerName)
         {
             var match = (from temp in context.Request.Headers
-                         where temp.Key == headerName
-                         select temp.Value).FirstOrDefault();
-
+            where temp.Key == headerName
+            select temp.Value).FirstOrDefault();
+            
             return match;
         }
-
-
     }
 }

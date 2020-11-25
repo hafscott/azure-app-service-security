@@ -1,80 +1,45 @@
 using System;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace Benday.EasyAuthDemo.Api.Security
 {
     public class SecurityConfiguration : ISecurityConfiguration
     {
-        private Microsoft.Extensions.Configuration.IConfiguration _Configuration;
-
         public SecurityConfiguration(Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             if (configuration == null)
             {
                 throw new ArgumentNullException(nameof(configuration), $"{nameof(configuration)} is null.");
             }
-
-            _Configuration = configuration;
+            
+            AuthType = configuration.GetValue<string>("SecuritySettings:AuthType");
+            LoginPath = configuration.GetValue<string>("SecuritySettings:LoginPath");
+            LogoutPath = configuration.GetValue<string>("SecuritySettings:LogoutPath");
+            PostLoginPath = configuration.GetValue<string>("SecuritySettings:PostLoginPath");
+            PostLogoutPath = configuration.GetValue<string>("SecuritySettings:PostLogoutPath");
+            UserAccountPath = configuration.GetValue<string>("SecuritySettings:UserAccountPath");
+            RegisterPath = configuration.GetValue<string>("SecuritySettings:RegisterPath");
+            DevelopmentMode = configuration.GetValue<bool>("SecuritySettings:DevelopmentMode");
+            AzureActiveDirectory = configuration.GetValue<bool>("SecuritySettings:AzureActiveDirectory");
+            Google = configuration.GetValue<bool>("SecuritySettings:Google");
+            MicrosoftAccount = configuration.GetValue<bool>("SecuritySettings:MicrosoftAccount");
+            Twitter = configuration.GetValue<bool>("SecuritySettings:Twitter");
+            Facebook = configuration.GetValue<bool>("SecuritySettings:Facebook");
         }
-
-        public bool DevelopmentMode
-        {
-            get
-            {
-                if (_Configuration["SecuritySettings:DevelopmentMode"] == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool AzureActiveDirectory
-        {
-            get
-            {
-                if (_Configuration["SecuritySettings:AzureActiveDirectory"] == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool Google
-        {
-            get
-            {
-                if (_Configuration["SecuritySettings:Google"] == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool MicrosoftAccount
-        {
-            get
-            {
-                if (_Configuration["SecuritySettings:MicrosoftAccount"] == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        
+        public string AuthType { get; private set; }
+        public bool DevelopmentMode { get; private set; }
+        public bool AzureActiveDirectory { get; private set; }
+        public bool Google { get; private set; }
+        public bool MicrosoftAccount { get; private set; }
+        public bool Twitter { get; private set; }
+        public bool Facebook { get; private set; }
+        public string LoginPath { get; private set; }
+        public string LogoutPath { get; private set; }
+        public string RegisterPath { get; private set; }
+        public string PostLoginPath { get; private set; }
+        public string PostLogoutPath { get; private set; }
+        public string UserAccountPath { get; private set; }
     }
 }
