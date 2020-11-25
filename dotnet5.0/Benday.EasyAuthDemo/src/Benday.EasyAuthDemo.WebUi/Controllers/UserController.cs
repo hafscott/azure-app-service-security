@@ -9,6 +9,8 @@ namespace Benday.EasyAuthDemo.WebUi.Controllers
         {
             var claimLogicTypes = WebUiUtilities.ToSelectListItems(
                 _LookupService.GetAllByType("System.UserClaim.ClaimLogicTypes"));
+            var claimNames = WebUiUtilities.ToSelectListItems(
+                _LookupService.GetAllByType("System.UserClaim.PermissionTypes"));
             var statusValues = WebUiUtilities.ToSelectListItems(
                 _LookupService.GetAllByType("System.Lookup.StatusValues"));
 
@@ -18,14 +20,16 @@ namespace Benday.EasyAuthDemo.WebUi.Controllers
                 newItem.UserId = viewModel.Id;
                 newItem.Username = viewModel.Username;
                 newItem.ClaimLogicTypes = claimLogicTypes;
+                newItem.ClaimNames = claimNames;
                 newItem.Statuses = statusValues;
             };
 
-            foreach(var item in viewModel.Claims)
+            foreach (var item in viewModel.Claims)
             {
+                item.ClaimNames = claimNames;
                 item.ClaimLogicTypes = claimLogicTypes;
                 item.Statuses = statusValues;
             }
-        }        
+        }
     }
 }
