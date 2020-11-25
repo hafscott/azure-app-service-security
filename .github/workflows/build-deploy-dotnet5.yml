@@ -43,6 +43,7 @@ jobs:
 
     - name: deploy database migrations
       run: dotnet ef database update
+      working-directory: 'dotnet5.0/Benday.EasyAuthDemo/src/Benday.EasyAuthDemo.Api'
 
     - name: Test
       run: dotnet test --no-restore --verbosity normal
