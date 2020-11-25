@@ -34,6 +34,10 @@ jobs:
         dotnet-version: 5.0.x
     - name: Install dependencies
       run: dotnet restore
+
+    - name: dotnet tool restore
+      run: dotnet tool restore
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
