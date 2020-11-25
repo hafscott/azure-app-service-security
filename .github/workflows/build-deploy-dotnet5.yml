@@ -67,6 +67,22 @@ jobs:
         keyname1: 'VersionMessage'
         # valuetoset: '${{ github.workflow }} - ${{ github.run_id }} - ${{ github.sha }} - ${{env.RUN_DATE}}'
         valuetoset: '${{env.RUN_DATE}}'
+    - name: Edit .net core database connection string in appsettings.json
+      uses: benday-inc/edit-dbconnstr-in-appsettings@main
+      with:
+        name: 'default'
+        connectionstring: '${{ secrets.DB_CONN_STR }}'
+        pathtosettingsfile: '${{ github.workspace }}/published/appsettings.json'
+
+    - name: Deploy EF Core migrations from a DLL
+      uses: benday-inc/deploy-ef-core-migration@main
+      with:
+        path_to_directory: '${{ github.workspace }}/published'
+        migrations_dll: 'Benday.EasyAuthDemo.Api.dll'
+        migrations_namespace: 'Benday.EasyAuthDemo.Api'
+        startup_dll: 'Benday.EasyAuthDemo.WebUi.dll'
+        dbcontext_class_name: 'EasyAuthDemoDbContext'
+  
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with: 
