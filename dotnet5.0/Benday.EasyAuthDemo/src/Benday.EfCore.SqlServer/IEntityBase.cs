@@ -1,4 +1,4 @@
-﻿using Benday.Common;
+using Benday.Common;
 using System.Collections.Generic;
 
 namespace Benday.EfCore.SqlServer

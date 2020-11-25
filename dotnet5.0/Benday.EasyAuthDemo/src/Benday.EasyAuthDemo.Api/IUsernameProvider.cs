@@ -4,6 +4,6 @@ namespace Benday.EasyAuthDemo.Api
 {
     public interface IUsernameProvider
     {
-        string GetUsername();
+        string Username { get; }
     }
 }

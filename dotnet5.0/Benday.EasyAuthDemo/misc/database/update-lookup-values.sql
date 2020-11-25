@@ -1,6 +1,3 @@
-USE [easyauthdemo]
-GO
-
 SET IDENTITY_INSERT [Lookup] ON
 GO
 
@@ -874,5 +871,6 @@ WHEN MATCHED THEN UPDATE SET
 WHEN NOT MATCHED BY TARGET THEN
 	INSERT (Id, LookupType, LookupKey, LookupValue, DisplayOrder, Status, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate)
 	VALUES (Id, LookupType, LookupKey, LookupValue, DisplayOrder, Status, CreatedBy, CreatedDate, LastModifiedBy, LastModifiedDate)
-;
+WHEN NOT MATCHED BY SOURCE THEN 
+	DELETE;
 GO

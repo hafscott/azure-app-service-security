@@ -1,4 +1,4 @@
-﻿using Benday.Common;
+using Benday.Common;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,15 +15,15 @@ namespace Benday.EfCore.SqlServer
         public SqlEntityFrameworkSearchableRepositoryBase(
             TDbContext context) : base(context)
         {
-
+            
         }
-
+        
         public virtual SearchResult<TEntity> Search(Search search)
         {
             var returnValue = new SearchResult<TEntity>();
             
             returnValue.SearchRequest = search;
-
+            
             if (search == null)
             {
                 returnValue.Results = new List<TEntity>();
@@ -32,9 +32,9 @@ namespace Benday.EfCore.SqlServer
             {
                 Expression<Func<TEntity, bool>> whereClausePredicate = null;
                 whereClausePredicate = GetWhereClause(search);
-
+                
                 IQueryable<TEntity> query = null;
-
+                
                 if (whereClausePredicate == null)
                 {
                     query = EntityDbSet.AsQueryable();
@@ -43,13 +43,13 @@ namespace Benday.EfCore.SqlServer
                 {
                     query = EntityDbSet.Where(whereClausePredicate);
                 }
-
+                
                 query = AddIncludes(query);
-
+                
                 query = AddSorts(search, query);
-
+                
                 query = BeforeSearch(query, search);
-
+                
                 if (search.MaxNumberOfResults == -1)
                 {
                     returnValue.Results = query.ToList();
@@ -59,10 +59,10 @@ namespace Benday.EfCore.SqlServer
                     returnValue.Results = query.Take(search.MaxNumberOfResults).ToList();
                 }
             }
-
+            
             return returnValue;
         }
-
+        
         protected virtual IOrderedQueryable<TEntity> EnsureIsOrderedQueryable(IQueryable<TEntity> query)
         {
             if (query is IOrderedQueryable<TEntity>)
@@ -74,7 +74,7 @@ namespace Benday.EfCore.SqlServer
                 return query.OrderBy(x => 0);
             }
         }
-
+        
         protected virtual IOrderedQueryable<TEntity> AddSort(IOrderedQueryable<TEntity> query, SortBy sort, bool isFirstSort)
         {
             if (sort.Direction == SearchConstants.SortDirectionAscending)
@@ -86,22 +86,22 @@ namespace Benday.EfCore.SqlServer
                 return AddSortDescending(query, sort.PropertyName, isFirstSort);
             }
         }
-
+        
         protected abstract IOrderedQueryable<TEntity> AddSortDescending(IOrderedQueryable<TEntity> query, string propertyName, bool isFirstSort);
         protected abstract IOrderedQueryable<TEntity> AddSortAscending(IOrderedQueryable<TEntity> query, string propertyName, bool isFirstSort);
-
+        
         protected virtual IQueryable<TEntity> AddSorts(Search search, IQueryable<TEntity> query)
         {
             if (search is null)
             {
                 throw new ArgumentNullException(nameof(search));
             }
-
+            
             if (query is null)
             {
                 throw new ArgumentNullException(nameof(query));
             }
-
+            
             if (search.Sorts == null || search.Sorts.Count == 0)
             {
                 return query;
@@ -111,7 +111,7 @@ namespace Benday.EfCore.SqlServer
                 if (String.IsNullOrWhiteSpace(search.Sorts[0].PropertyName) == false)
                 {
                     var returnValue = AddSort(EnsureIsOrderedQueryable(query), search.Sorts[0], true);
-
+                    
                     return returnValue;
                 }
                 else
@@ -122,26 +122,26 @@ namespace Benday.EfCore.SqlServer
             else
             {
                 bool isFirst = true;
-
+                
                 foreach (var item in search.Sorts)
                 {
                     if (String.IsNullOrWhiteSpace(item.PropertyName) == false)
                     {
                         query = AddSort(EnsureIsOrderedQueryable(query), item, isFirst);
-
+                        
                         isFirst = false;
                     }
                 }
-
+                
                 return query;
             }
         }
-
+        
         private Expression<Func<TEntity, bool>> GetWhereClause(Search search)
         {
             Expression<Func<TEntity, bool>> whereClausePredicate = null;
             Expression<Func<TEntity, bool>> predicate = null;
-
+            
             foreach (var arg in search.Arguments)
             {
                 if (arg.Method == SearchMethod.Contains)
@@ -168,10 +168,10 @@ namespace Benday.EfCore.SqlServer
                 {
                     predicate = GetPredicateForDoesNotContain(arg);
                 }
-
+                
                 if (predicate == null)
                 {
-                    // if predicate is null, the implementer chose to ignore this 
+                    // if predicate is null, the implementer chose to ignore this
                     // search argument and returned null as an indication to skip
                     continue;
                 }
@@ -190,29 +190,29 @@ namespace Benday.EfCore.SqlServer
                 else
                 {
                     throw new InvalidOperationException(
-                        String.Format("Search operator '{0}' is not supported.", arg.Operator));
+                    String.Format("Search operator '{0}' is not supported.", arg.Operator));
                 }
             }
-
+            
             return whereClausePredicate;
         }
-
+        
         protected virtual IQueryable<TEntity> BeforeSearch(IQueryable<TEntity> query, Search search)
         {
             return query;
         }
-
+        
         protected abstract Expression<Func<TEntity, bool>> GetPredicateForDoesNotContain(
             SearchArgument arg);
-        protected abstract Expression<Func<TEntity, bool>> GetPredicateForIsNotEqualTo(
+            protected abstract Expression<Func<TEntity, bool>> GetPredicateForIsNotEqualTo(
             SearchArgument arg);
-        protected abstract Expression<Func<TEntity, bool>> GetPredicateForEquals(
+            protected abstract Expression<Func<TEntity, bool>> GetPredicateForEquals(
             SearchArgument arg);
-        protected abstract Expression<Func<TEntity, bool>> GetPredicateForEndsWith(
+            protected abstract Expression<Func<TEntity, bool>> GetPredicateForEndsWith(
             SearchArgument arg);
-        protected abstract Expression<Func<TEntity, bool>> GetPredicateForStartsWith(
+            protected abstract Expression<Func<TEntity, bool>> GetPredicateForStartsWith(
             SearchArgument arg);
-        protected abstract Expression<Func<TEntity, bool>> GetPredicateForContains(
-            SearchArgument arg);      
-    }
-}
+            protected abstract Expression<Func<TEntity, bool>> GetPredicateForContains(
+            SearchArgument arg);
+            }
+            }

@@ -8,25 +8,25 @@ namespace Benday.EasyAuthDemo.WebUi.Models
     {
         private IList<T> _Results;
         private int _CurrentPage;
-
+        
         public PageableResults()
         {
             ItemsPerPage = 10;
         }
-
+        
         public void Initialize(IList<T> values)
         {
             if (values is null)
             {
                 throw new ArgumentNullException(nameof(values));
             }
-
+            
             Results = values;
-
+            
             PageCount = CalculatePageCount();
             SetCurrentPage(1);
         }
-
+        
         private void SetCurrentPage(int pageNumber)
         {
             if (pageNumber >= PageCount)
@@ -41,10 +41,10 @@ namespace Benday.EasyAuthDemo.WebUi.Models
             {
                 _CurrentPage = pageNumber;
             }
-
+            
             PopulatePageValues();
         }
-
+        
         private void PopulatePageValues()
         {
             if (CurrentPage == 1)
@@ -54,11 +54,11 @@ namespace Benday.EasyAuthDemo.WebUi.Models
             else
             {
                 PageValues = Results
-                    .Skip((CurrentPage - 1) * ItemsPerPage)
-                    .Take(ItemsPerPage).ToList();
+                .Skip((CurrentPage - 1) * ItemsPerPage)
+                .Take(ItemsPerPage).ToList();
             }
         }
-
+        
         private int CalculatePageCount()
         {
             if (ItemsPerPage == 0)
@@ -73,7 +73,7 @@ namespace Benday.EasyAuthDemo.WebUi.Models
             {
                 int pageCount = TotalCount / ItemsPerPage;
                 int remainder = TotalCount % ItemsPerPage;
-
+                
                 if (remainder == 0)
                 {
                     return pageCount;
@@ -84,7 +84,7 @@ namespace Benday.EasyAuthDemo.WebUi.Models
                 }
             }
         }
-
+        
         public IList<T> Results
         {
             get
@@ -93,15 +93,15 @@ namespace Benday.EasyAuthDemo.WebUi.Models
                 {
                     _Results = new List<T>();
                 }
-
+                
                 return _Results;
             }
-            private set
-            {
-                _Results = value;
-            }
+        private set
+        {
+            _Results = value;
         }
-
+    }
+    
         public int TotalCount
         {
             get
@@ -109,7 +109,7 @@ namespace Benday.EasyAuthDemo.WebUi.Models
                 return Results.Count;
             }
         }
-
+        
         public int ItemsPerPage { get; set; }
         public int PageCount { get; set; }
         public int CurrentPage
@@ -123,7 +123,7 @@ namespace Benday.EasyAuthDemo.WebUi.Models
                 SetCurrentPage(value);
             }
         }
-
+        
         public IList<T> PageValues { get; private set; }
     }
 }
