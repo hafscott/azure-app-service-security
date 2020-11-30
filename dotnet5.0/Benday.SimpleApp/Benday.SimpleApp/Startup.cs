@@ -1,3 +1,4 @@
+using Benday.SimpleApp.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -24,6 +25,8 @@ namespace Benday.SimpleApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddTransient<PopulateClaimsMiddleware>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +49,8 @@ namespace Benday.SimpleApp
 
             app.UseAuthorization();
 
+            app.UseMiddleware<PopulateClaimsMiddleware>();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
