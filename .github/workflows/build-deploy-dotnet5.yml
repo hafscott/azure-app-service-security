@@ -8,8 +8,12 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    paths:
+    - 'dotnet5.0/Benday.EasyAuthDemo'
   pull_request:
     branches: [ main ]
+    paths:
+    - 'dotnet5.0/Benday.EasyAuthDemo'
 
 jobs:
   build:
