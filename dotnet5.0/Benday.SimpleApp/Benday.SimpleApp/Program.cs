@@ -23,4 +23,5 @@ namespace Benday.SimpleApp
                     webBuilder.UseStartup<Startup>();
                 });
     }
+// asdf
 }
