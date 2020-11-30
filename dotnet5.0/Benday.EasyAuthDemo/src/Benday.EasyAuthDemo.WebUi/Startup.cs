@@ -72,6 +72,7 @@ namespace Benday.EasyAuthDemo.WebUi
             {
                 options.LoginPath = new PathString(config.LoginPath);
                 options.LogoutPath = new PathString(config.LogoutPath);
+                options.AccessDeniedPath = new PathString(config.LoginPath);
             });
         }
         

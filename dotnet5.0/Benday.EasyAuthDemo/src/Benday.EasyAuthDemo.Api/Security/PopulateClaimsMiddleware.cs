@@ -35,12 +35,7 @@ namespace Benday.EasyAuthDemo.Api.Security
         {
             List<Claim> claims = new List<Claim>();
 
-            if (_Configuration.DevelopmentMode == true &&
-            context.User != null &&
-            context.User.Claims != null &&
-            context.User.Claims.GetClaimValue(
-            SecurityConstants.Claim_X_MsClientPrincipalIdp) ==
-            SecurityConstants.Idp_DevelopmentMode)
+            if (_Configuration.DevelopmentMode == true)
             {
                 ProcessDevelopmentModeClaims(context, claims);
             }
