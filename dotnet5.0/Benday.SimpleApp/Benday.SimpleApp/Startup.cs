@@ -49,7 +49,10 @@ namespace Benday.SimpleApp
 
             app.UseAuthorization();
 
-            app.UseMiddleware<PopulateClaimsMiddleware>();
+            if (Configuration.GetValue<string>("Security:PopulateClaims") == "true")
+            {
+                app.UseMiddleware<PopulateClaimsMiddleware>();
+            }
             
             app.UseEndpoints(endpoints =>
             {
