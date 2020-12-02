@@ -42,6 +42,8 @@ namespace Benday.EasyAuthDemo.WebUi
             services.AddOptions();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages();
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
             
             RegisterTypes(services);
             ConfigureAuthentication(services);
@@ -214,7 +216,7 @@ namespace Benday.EasyAuthDemo.WebUi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {
