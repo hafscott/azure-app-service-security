@@ -86,7 +86,11 @@ jobs:
         migrations_namespace: 'Benday.EasyAuthDemo.Api'
         startup_dll: 'Benday.EasyAuthDemo.WebUi.dll'
         dbcontext_class_name: 'EasyAuthDemoDbContext'
-  
+
+    - name: update lookup values in database
+      working-directory: 'dotnet5.0/Benday.EasyAuthDemo/misc/database'
+      run: sqlcmd -S ${{ secrets.DATABASE_SERVER }} -i ./misc/database/update-lookup-values.sql -d ${{ secrets.DATABASE_CATALOG }} -U ${{ secrets.DATABASE_USERNAME }} -P ${{ secrets.DATABASE_PASSWORD }}
+
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with: 

@@ -63,6 +63,10 @@ ViewBag.Title = "Edit User";
             <span asp-validation-for="@Model.PhoneNumber" class="text-danger">
             </span>
         </div>
+
+        <div class="form-group">
+            Admin role name: @Benday.EasyAuthDemo.Api.Security.SecurityConstants.RoleName_Admin
+        </div>
     
         <div class="form-group">
         @Html.LabelFor(model => model.Claims, htmlAttributes: new { @class = "control-label" })
