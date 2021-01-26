@@ -1,4 +1,4 @@
-name: build-deploy-dotnet5
+name: build-deploy-dotnet5-demo2
 
 defaults:
   run:
