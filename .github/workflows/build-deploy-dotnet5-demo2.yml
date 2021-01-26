@@ -90,6 +90,6 @@ jobs:
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: "vslvirtual1"
-        publish-profile: ${{ secrets.PUBLISH_PROFILE_APPSERVICE1  }}
+        app-name: "appservicesecurity2"
+        publish-profile: ${{ secrets.PUBLISH_PROFILE_APPSERVICE2  }}
         package: '${{ github.workspace }}/published'
