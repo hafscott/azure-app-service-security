@@ -90,6 +90,6 @@ jobs:
     - name: 'Run Azure webapp deploy action using publish profile credentials'
       uses: azure/webapps-deploy@v2
       with: 
-        app-name: "appservicesecurity2"
+        app-name: "bdc-appservicesecurity2"
         publish-profile: ${{ secrets.PUBLISH_PROFILE_APPSERVICE2  }}
         package: '${{ github.workspace }}/published'
