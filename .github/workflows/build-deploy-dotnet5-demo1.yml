@@ -1,0 +1,50 @@
+name: build-deploy-dotnet5-demo1
+
+defaults:
+  run:
+    working-directory: 'dotnet5.0/Benday.SimpleApp'
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+    - 'dotnet5.0/Benday.SimpleApp/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+    - 'dotnet5.0/Benday.SimpleApp/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: dotnet tool restore
+      run: dotnet tool restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    # - name: Test
+    #   run: dotnet test --no-restore --verbosity normal
+    - name: Publish
+      run: dotnet publish --configuration Release -o '${{ github.workspace }}/published'
+      working-directory: 'dotnet5.0/Benday.SimpleApp/src/Benday.SimpleApp.WebUi'
+    
+    - name: 'Run Azure webapp deploy action using publish profile credentials'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: "vslvirtual1"
+        publish-profile: ${{ secrets.PUBLISH_PROFILE_APPSERVICE1  }}
+        package: '${{ github.workspace }}/published'
